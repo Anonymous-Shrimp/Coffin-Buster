@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-public class Movement : MonoBehaviour
+public class Movement : NetworkBehaviour
 {
     CharacterController characterController;
 
@@ -13,7 +14,7 @@ public class Movement : MonoBehaviour
     public KeyCode dashKeybind = KeyCode.Space;
     public float dashSpeed;
     public float dashTime;
-
+    public float pushPower = 2f;
     private Vector3 moveDirection = Vector3.zero;
 
     void Start()
@@ -21,8 +22,10 @@ public class Movement : MonoBehaviour
         characterController = GetComponent<CharacterController>();
     }
 
+    [Client]
     void Update()
     {
+        if (!hasAuthority) { return; }
         #region Movement
         moveDirection.y -= gravity * Time.deltaTime;
         
@@ -63,5 +66,27 @@ public class Movement : MonoBehaviour
             
             yield return null; 
         }
+    }
+    void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        Rigidbody body = hit.collider.attachedRigidbody;
+
+        // no rigidbody
+        if (body == null || body.isKinematic)
+            return;
+
+        // We dont want to push objects below us
+        if (hit.moveDirection.y < -0.3f)
+            return;
+
+        // Calculate push direction from move direction,
+        // we only push objects to the sides never up and down
+        Vector3 pushDir = new Vector3(hit.moveDirection.x, 0, hit.moveDirection.z);
+
+        // If you know how fast your character is trying to move,
+        // then you can also multiply the push velocity by that.
+
+        // Apply the push
+        body.velocity = pushDir * pushPower;
     }
 }

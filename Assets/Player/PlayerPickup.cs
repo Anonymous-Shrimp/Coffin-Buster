@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-public class PlayerPickup : MonoBehaviour
+public class PlayerPickup : NetworkBehaviour
 {
     public KeyCode pickupKeybind = KeyCode.Mouse0;
     public string pickupTag = "PickupItem";
@@ -25,6 +26,7 @@ public class PlayerPickup : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!hasAuthority) { return; }
         GameObject targeted = null;
         if (!pickedUp)
         { 
