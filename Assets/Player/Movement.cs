@@ -4,43 +4,64 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
-    public float speed = 3f;
-    Rigidbody rigid;
+    CharacterController characterController;
+
+    public float speed = 6.0f;
+    public float gravity = 20.0f;
+    public float rotSpeed = 10;
+
     public KeyCode dashKeybind = KeyCode.Space;
-    public float dashForce = 10;
+    public float dashSpeed;
     public float dashTime;
-    float dashTimeUsed;
-    // Start is called before the first frame update
+
+    private Vector3 moveDirection = Vector3.zero;
+
     void Start()
     {
-        rigid = GetComponent<Rigidbody>();
+        characterController = GetComponent<CharacterController>();
     }
-    void FixedUpdate()
-    {
-        float mH = Input.GetAxis("Horizontal");
-        float mV = Input.GetAxis("Vertical");
-        rigid.velocity = new Vector3(mH * speed, rigid.velocity.y, mV * speed);
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if(Physics.Raycast(ray, out hit))
-        {
-            transform.LookAt(hit.point);
-            transform.rotation = new Quaternion(0, transform.rotation.y, 0, transform.rotation.w);
-        }
-        if (Input.GetKeyDown(dashKeybind))
-        {
-            dashTimeUsed = 0;
-        }
-        if(dashTimeUsed < dashTime)
-        {
-            dashTimeUsed += Time.deltaTime;
-            rigid.AddRelativeForce(new Vector3(0, 0, dashForce * Time.deltaTime));
-        }
 
-    }
-    // Update is called once per frame
     void Update()
     {
+        #region Movement
+        moveDirection.y -= gravity * Time.deltaTime;
         
+        characterController.Move(moveDirection * Time.deltaTime);
+
+        float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vertical");
+        if (characterController.isGrounded)
+        {
+            // We are grounded, so recalculate
+            // move direction directly from axes
+
+            moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0.0f, Input.GetAxis("Vertical"));
+            moveDirection = Camera.main.transform.TransformDirection(moveDirection);
+            moveDirection *= speed;
+            
+        }
+        if (v != 0 || h != 0)
+        {
+            Vector3 fwd = new Vector3(h, 0, v);
+            fwd = Camera.main.transform.TransformDirection(fwd);
+            fwd.y = 0;
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(fwd), rotSpeed * Time.deltaTime);
+        }
+        #endregion
+        
+        if (Input.GetKeyDown(dashKeybind))
+        {
+            StartCoroutine(Dash());
+        }
+    }
+    private IEnumerator Dash()
+    {
+        float startTime = Time.time; 
+        while (Time.time < startTime + dashTime)
+        {
+            characterController.Move(transform.forward * dashSpeed * Time.deltaTime);
+            
+            yield return null; 
+        }
     }
 }
