@@ -669,10 +669,10 @@ PlayerSettings:
     m_VersionCode: 1
     m_VersionName: 
   apiCompatibilityLevel: 6
-  cloudProjectId: 
+  cloudProjectId: f0d42d41-58ed-4413-bd92-34cf8ae70e90
   framebufferDepthMemorylessMode: 0
-  projectName: 
-  organizationId: 
+  projectName: Coffin Buster
+  organizationId: mogenius-games
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0
   disableOldInputManagerSupport: 0
