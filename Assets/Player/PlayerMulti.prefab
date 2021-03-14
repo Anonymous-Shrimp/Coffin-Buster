@@ -851,7 +851,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   speed: 6
-  gravity: 130
+  gravity: 250
   rotSpeed: 10
   dashKeybind: 32
   dashSpeed: 10
@@ -861,8 +861,9 @@ MonoBehaviour:
   pickupTag: PickupItem
   pickupDistance: 3
   itemHeld: {fileID: 0}
-  releaseParent: {fileID: 0}
-  offsetHold: {x: 0, y: 0, z: 0.7}
+  FakeParent: {fileID: 0}
+  _positionOffset: {x: 0, y: 0, z: 1}
+  _rotationOffset: {x: 0, y: 0, z: 0, w: 0}
   canPickup: 1
   pickupObject: {fileID: 0}
   playerColor: {r: 0, g: 0.52156734, b: 1, a: 1}

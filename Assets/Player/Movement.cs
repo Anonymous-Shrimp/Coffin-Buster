@@ -21,12 +21,14 @@ public class Movement : NetworkBehaviour
     public string pickupTag = "PickupItem";
     public float pickupDistance = 3f;
     public GameObject itemHeld;
-    public GameObject releaseParent;
-    public Vector3 offsetHold;
+    public Transform FakeParent;
+    public Vector3 _positionOffset;
+    public Quaternion _rotationOffset;
     bool pickedUp = false;
     public bool canPickup = true;
     public PlayerPickup pickupObject;
     public Color playerColor;
+
     public Outline.Mode outlineMode = Outline.Mode.OutlineAll;
 
     void Start()
@@ -46,16 +48,14 @@ public class Movement : NetworkBehaviour
 
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
-        if (characterController.isGrounded)
+        if(characterController.isGrounded)
         {
-            // We are grounded, so recalculate
-            // move direction directly from axes
-
             moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0.0f, Input.GetAxis("Vertical"));
             moveDirection = Camera.main.transform.TransformDirection(moveDirection);
             moveDirection *= speed;
             
         }
+
         if (v != 0 || h != 0)
         {
             Vector3 fwd = new Vector3(h, 0, v);
@@ -121,14 +121,6 @@ public class Movement : NetworkBehaviour
         {
             if (pickedUp)
             {
-                if (releaseParent != null)
-                {
-                    itemHeld.transform.parent = releaseParent.transform;
-                }
-                else
-                {
-                    itemHeld.transform.parent = null;
-                }
                 if (itemHeld.GetComponent<Rigidbody>() != null)
                 {
                     itemHeld.GetComponent<Rigidbody>().isKinematic = false;
@@ -149,10 +141,7 @@ public class Movement : NetworkBehaviour
                         targeted.GetComponent<Outline>().enabled = false;
                     }
                     pickedUp = true;
-
-                    itemHeld.transform.parent = transform;
-                    itemHeld.transform.localPosition = offsetHold;
-                    itemHeld.transform.localRotation = new Quaternion(0, 0, 0, 0);
+                    
                     if (itemHeld.GetComponent<Rigidbody>() != null)
                     {
                         itemHeld.GetComponent<Rigidbody>().isKinematic = true;
@@ -160,6 +149,15 @@ public class Movement : NetworkBehaviour
                     targeted = null;
                 }
             }
+        }
+        if(itemHeld != null)
+        {
+            var newpos = transform.TransformPoint(_positionOffset);
+            var newfw = transform.TransformDirection(transform.forward);
+            var newup = transform.TransformDirection(transform.up);
+            var newrot = Quaternion.LookRotation(newfw, newup);
+            itemHeld.transform.position = newpos;
+            itemHeld.transform.rotation = newrot;
         }
         #endregion
     }
@@ -173,6 +171,7 @@ public class Movement : NetworkBehaviour
             yield return null; 
         }
     }
+    
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
         Rigidbody body = hit.collider.attachedRigidbody;
