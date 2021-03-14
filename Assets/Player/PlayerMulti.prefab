@@ -244,7 +244,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &502119529
 Transform:
   m_ObjectHideFlags: 0
@@ -665,16 +665,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  pickupKeybind: 323
-  pickupTag: PickupItem
-  pickupDistance: 3
-  itemHeld: {fileID: 0}
-  releaseParent: {fileID: 0}
-  offsetHold: {x: 0, y: 0, z: 0.7}
-  canPickup: 1
   possiblePickupItems: []
-  playerColor: {r: 0, g: 0.52156734, b: 1, a: 1}
-  outlineMode: 0
 --- !u!114 &3995972194647216787
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -866,6 +857,16 @@ MonoBehaviour:
   dashSpeed: 10
   dashTime: 0.15
   pushPower: 2
+  pickupKeybind: 323
+  pickupTag: PickupItem
+  pickupDistance: 3
+  itemHeld: {fileID: 0}
+  releaseParent: {fileID: 0}
+  offsetHold: {x: 0, y: 0, z: 0.7}
+  canPickup: 1
+  pickupObject: {fileID: 0}
+  playerColor: {r: 0, g: 0.52156734, b: 1, a: 1}
+  outlineMode: 0
 --- !u!143 &3197507539058400756
 CharacterController:
   m_ObjectHideFlags: 0
